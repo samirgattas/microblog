@@ -11,6 +11,7 @@ func main() {
 	healthCheckHandler := healthcheck.NewHealthCheckHandler()
 
 	router := gin.Default()
+	router.Use(middleware.ErrorHandler())
 
 	// Routes
 	router.GET("/ping", healthCheckHandler.HealthCheck)
