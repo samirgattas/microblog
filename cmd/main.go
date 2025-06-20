@@ -27,7 +27,12 @@ func main() {
 	router.Use(middleware.ErrorHandler())
 
 	// Routes
+	// Health check
 	router.GET("/ping", healthCheckHandler.HealthCheck)
+
+	// User
+	router.POST("/users", userHandler.CreateUser)
+	router.GET("/users/:user_id", userHandler.GetUser)
 
 	// Run server
 	router.Run("localhost:8080")
