@@ -1,0 +1,29 @@
+package customerror
+
+import (
+	"fmt"
+	"net/http"
+)
+
+type CustomError struct {
+	Message    string `json:"message"`
+	StatusCode int    `json:"status"`
+}
+
+func (e CustomError) Error() string {
+	return fmt.Sprintf("Message: %s, Status: %d", e.Message, e.StatusCode)
+}
+
+func NewNotFoundError(entity string) error {
+	return CustomError{
+		Message:    fmt.Sprintf("%s not found", entity),
+		StatusCode: http.StatusNotFound,
+	}
+}
+
+func NewBadRequestError(msg string) error {
+	return CustomError{
+		Message:    msg,
+		StatusCode: http.StatusBadRequest,
+	}
+}
