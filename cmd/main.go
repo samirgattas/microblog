@@ -22,6 +22,13 @@ func main() {
 	// Create User handler
 	userHandler := userhandler.NewUserHandler(userService)
 
+	// Create Followed repository
+	followedRepository := followed.NewFollowedRepository(followedDB)
+	// Create Followed service
+	followedService := followedservice.NewFollowedService(followedRepository, userRepository)
+	// Create Followed handler
+	followedHandler := followedhandler.NewFollowedHandler(followedService)
+
 	// Create HealthCheckHandler
 	healthCheckHandler := healthcheck.NewHealthCheckHandler()
 
