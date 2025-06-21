@@ -32,7 +32,7 @@ func (s *tweetService) Create(ctx context.Context, tweet *domain.Tweet) error {
 	}
 
 	// Check if the user exists
-	_, err := s.userRepository.Get(tweet.UserID)
+	_, err := s.userRepository.Get(ctx, tweet.UserID)
 	if err != nil {
 		var cErr customerror.NotFoundError
 		// If the user does not exist, then return a bad request

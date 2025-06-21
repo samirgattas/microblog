@@ -6,8 +6,8 @@ import (
 )
 
 type FollowedService interface {
-	CreateFollowed(context.Context, *domain.Followed) error
-	GetFollowed(context.Context, int64) (*domain.Followed, error)
-	UpdateFollowed(context.Context, int64, *domain.FollowedPatchCommand) (*domain.Followed, error)
-	SearchFollowed(context.Context, *int64, *int64) ([]domain.Followed, error)
+	Create(ctx context.Context, followed *domain.Followed) error
+	Get(ctx context.Context, followedID int64) (*domain.Followed, error)
+	Update(ctx context.Context, followedID int64, followedPatchCmd *domain.FollowedPatchCommand) (*domain.Followed, error)
+	Search(ctx context.Context, followerUserID *int64, followedUserID *int64) ([]domain.Followed, error)
 }
