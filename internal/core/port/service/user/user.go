@@ -2,7 +2,8 @@ package user
 
 import (
 	"context"
-	"microblog/internal/core/domain"
+
+	"github.com/samirgattas/microblog/internal/core/domain"
 )
 
 type UserService interface {

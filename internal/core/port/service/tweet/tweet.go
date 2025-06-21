@@ -2,7 +2,8 @@ package tweet
 
 import (
 	"context"
-	"microblog/internal/core/domain"
+
+	"github.com/samirgattas/microblog/internal/core/domain"
 )
 
 type TweetService interface {

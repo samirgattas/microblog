@@ -2,9 +2,10 @@ package user
 
 import (
 	"context"
-	"microblog/internal/core/domain"
-	"microblog/internal/core/port/repository"
-	"microblog/internal/core/port/service/user"
+
+	"github.com/samirgattas/microblog/internal/core/domain"
+	"github.com/samirgattas/microblog/internal/core/port/repository"
+	"github.com/samirgattas/microblog/internal/core/port/service/user"
 )
 
 type userService struct {

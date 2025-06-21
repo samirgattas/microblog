@@ -3,10 +3,11 @@ package followed
 import (
 	"context"
 	"log/slog"
-	"microblog/internal/core/domain"
-	"microblog/internal/core/lib/customerror"
-	"microblog/internal/core/port/repository"
-	"microblog/internal/core/port/service/followed"
+
+	"github.com/samirgattas/microblog/internal/core/domain"
+	"github.com/samirgattas/microblog/internal/core/lib/customerror"
+	"github.com/samirgattas/microblog/internal/core/port/repository"
+	"github.com/samirgattas/microblog/internal/core/port/service/followed"
 )
 
 type followedService struct {

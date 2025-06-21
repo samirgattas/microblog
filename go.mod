@@ -1,4 +1,4 @@
-module microblog
+module github.com/samirgattas/microblog
 
 go 1.24.4
 
