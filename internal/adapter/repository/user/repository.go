@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"log/slog"
 	"microblog/internal/core/domain"
 	"microblog/internal/core/lib/customerror"
@@ -24,9 +25,8 @@ func (u *userRepository) Save(ctx context.Context, user *domain.User) error {
 }
 
 func (u *userRepository) Get(ctx context.Context, userID int64) (*domain.User, error) {
-	user := domain.User{}
-	user = u.usersDB[ID]
-	if user.ID == 0 {
+	user, ok := u.usersDB[userID]
+	if !ok {
 		slog.ErrorContext(ctx, "user not found", slog.Any("user_id", userID))
 		return &domain.User{}, customerror.NewNotFoundError("user")
 	}
