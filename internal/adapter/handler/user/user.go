@@ -50,8 +50,8 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 }
 
 func (h *userHandler) GetUser(c *gin.Context) {
-	IDStr := c.Param("user_id")
-	if IDStr == "" {
+user	IDStr := c.Param("user_id")
+	if userIDStr == "" {
 		slog.ErrorContext(c, "empty user_id")
 		c.Error(customerror.NewBadRequestError("empty user_id"))
 		return
