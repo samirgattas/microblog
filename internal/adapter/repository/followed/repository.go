@@ -49,12 +49,14 @@ func (r *followedRepository) Update(ctx context.Context, followed *domain.Follow
 	return nil
 }
 
-func (r *followedRepository) SearchByUserIDAndFollowedUserID(ctx context.Context, userID *int64, followedUserID *int64) ([]domain.Followed, error) {
+func (r *followedRepository) SearchByUserIDAndFollowedUserID(ctx context.Context, followerUserID *int64, followedUserID *int64) ([]domain.Followed, error) {
 	followedArray := []domain.Followed{}
-	for key, followed := range r.followedDB {
-		if userID != nil && key != *userID {
+	for _, followed := range r.followedDB {
+		// Discad followed because is not the right follower_user_id
+		if followerUserID != nil && followed.UserID != *followerUserID {
 			continue
 		}
+		// Discad followed because is not the right followed_user_id
 		if followedUserID != nil && followed.FollowedUserID != *followedUserID {
 			continue
 		}
