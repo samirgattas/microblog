@@ -6,6 +6,6 @@ import (
 )
 
 type UserService interface {
-	Create(context.Context, *domain.User) error
-	Get(context.Context, int64) (*domain.User, error)
+	Create(ctx context.Context, user *domain.User) error
+	Get(ctx context.Context, userID int64) (*domain.User, error)
 }

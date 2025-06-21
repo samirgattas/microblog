@@ -6,6 +6,6 @@ import (
 )
 
 type UserRepository interface {
-	Save(context.Context, *domain.User) error
-	Get(context.Context, int64) (*domain.User, error)
+	Save(ctx context.Context, user *domain.User) error
+	Get(ctx context.Context, userID int64) (*domain.User, error)
 }
