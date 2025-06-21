@@ -15,15 +15,27 @@ func (e CustomError) Error() string {
 }
 
 func NewNotFoundError(entity string) error {
-	return CustomError{
-		Message:    fmt.Sprintf("%s not found", entity),
-		StatusCode: http.StatusNotFound,
+	return NotFoundError{
+		CustomError: CustomError{
+			Message:    fmt.Sprintf("%s not found", entity),
+			StatusCode: http.StatusNotFound,
+		},
 	}
 }
 
 func NewBadRequestError(msg string) error {
-	return CustomError{
-		Message:    msg,
-		StatusCode: http.StatusBadRequest,
+	return BadRequestError{
+		CustomError{
+			Message:    msg,
+			StatusCode: http.StatusBadRequest,
+		},
 	}
+}
+
+type NotFoundError struct {
+	CustomError
+}
+
+type BadRequestError struct {
+	CustomError
 }
