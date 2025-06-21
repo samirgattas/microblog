@@ -20,7 +20,7 @@ func NewFollowedService(followedRepository repository.FollowedRepository, userRe
 	}
 }
 
-func (s *followedService) CreateFollowed(ctx context.Context, followed *domain.Followed) error {
+func (s *followedService) Create(ctx context.Context, followed *domain.Followed) error {
 	// Check if the user id exists
 	_, err := s.userRepository.Get(followed.UserID)
 	if err != nil {
@@ -44,7 +44,7 @@ func (s *followedService) CreateFollowed(ctx context.Context, followed *domain.F
 	return nil
 }
 
-func (s *followedService) GetFollowed(ctx context.Context, followedID int64) (*domain.Followed, error) {
+func (s *followedService) Get(ctx context.Context, followedID int64) (*domain.Followed, error) {
 	// Get the followed entity
 	followed, err := s.repository.Get(ctx, followedID)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *followedService) GetFollowed(ctx context.Context, followedID int64) (*d
 	return followed, nil
 }
 
-func (s *followedService) UpdateFollowed(ctx context.Context, followedID int64, followedPatchCmd *domain.FollowedPatchCommand) (*domain.Followed, error) {
+func (s *followedService) Update(ctx context.Context, followedID int64, followedPatchCmd *domain.FollowedPatchCommand) (*domain.Followed, error) {
 	// Check if enabled is set
 	if followedPatchCmd.Enabled == nil {
 		return &domain.Followed{}, customerror.NewBadRequestError("enabled should not be null")
@@ -83,7 +83,7 @@ func (s *followedService) UpdateFollowed(ctx context.Context, followedID int64, 
 	return followed, nil
 }
 
-func (s *followedService) SearchFollowed(ctx context.Context, userID *int64, followedUserID *int64) ([]domain.Followed, error) {
+func (s *followedService) Search(ctx context.Context, userID *int64, followedUserID *int64) ([]domain.Followed, error) {
 	// Get the followed entity
 	followed, err := s.repository.SearchByUserIDAndFollowedUserID(ctx, userID, followedUserID)
 	if err != nil {

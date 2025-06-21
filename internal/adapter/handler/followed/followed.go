@@ -41,7 +41,7 @@ func (h *followedHandler) CreateFollowed(c *gin.Context) {
 		return
 	}
 
-	err = h.service.CreateFollowed(c, followed)
+	err = h.service.Create(c, followed)
 	if err != nil {
 		c.Error(err)
 		return
@@ -64,7 +64,7 @@ func (h *followedHandler) GetFollowed(c *gin.Context) {
 		c.Error(customerror.NewBadRequestError("invalid followed_id"))
 		return
 	}
-	user, err := h.service.GetFollowed(c, ID)
+	user, err := h.service.Get(c, ID)
 	if err != nil {
 		c.Error(err)
 		return
@@ -101,7 +101,7 @@ func (h *followedHandler) UpdateFollowed(c *gin.Context) {
 		return
 	}
 
-	followed, err := h.service.UpdateFollowed(c, followedID, followedPatchCmd)
+	followed, err := h.service.Update(c, followedID, followedPatchCmd)
 	if err != nil {
 		c.Error(err)
 		return
@@ -140,7 +140,7 @@ func (h *followedHandler) SearchFollowed(c *gin.Context) {
 		return
 	}
 
-	followed, err := h.service.SearchFollowed(c, userID, followedUserID)
+	followed, err := h.service.Search(c, userID, followedUserID)
 	if err != nil {
 		c.Error(err)
 		return
