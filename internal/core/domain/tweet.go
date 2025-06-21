@@ -14,3 +14,9 @@ type Tweet struct {
 	Post      string     `json:"post"`
 	CreatedAt *time.Time `json:"created_at"`
 }
+
+type TweetSearchParams struct {
+	Limit   int64
+	Offset  int64
+	UserIDs []int64
+}
