@@ -1,10 +1,11 @@
 package user
 
-import "microblog/internal/core/domain"
+import (
+	"context"
+	"microblog/internal/core/domain"
+)
 
 type UserService interface {
-	Create(*domain.User) (error)
-	Get(int64) (*domain.User, error)
+	Create(context.Context, *domain.User) error
+	Get(context.Context, int64) (*domain.User, error)
 }
-
-

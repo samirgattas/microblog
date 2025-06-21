@@ -32,7 +32,7 @@ func (s *tweetService) Create(ctx context.Context, tweet *domain.Tweet) error {
 	}
 
 	// Check if the user exists
-	_, err := s.userRepository.Get(tweet.UserID)
+	_, err := s.userRepository.Get(ctx, tweet.UserID)
 	if err != nil {
 		var cErr customerror.NotFoundError
 		// If the user does not exist, then return a bad request
@@ -70,6 +70,7 @@ func (s *tweetService) Search(ctx context.Context, followerUserID int64, limit i
 
 	followedUserIDs := []int64{}
 	for _, f := range followed {
+		slog.InfoContext(ctx, "followed user_id", slog.Any("followed_user_id", f.FollowedUserID))
 		followedUserIDs = append(followedUserIDs, f.FollowedUserID)
 	}
 

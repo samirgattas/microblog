@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"microblog/internal/core/domain"
 	"microblog/internal/core/port/repository"
 	"microblog/internal/core/port/service/user"
@@ -16,16 +17,16 @@ func NewUserService(userRepository repository.UserRepository) user.UserService {
 	}
 }
 
-func (u *userService) Create(user *domain.User) error {
-	err := u.Repository.Save(user)
+func (u *userService) Create(ctx context.Context, user *domain.User) error {
+	err := u.Repository.Save(ctx, user)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *userService) Get(ID int64) (*domain.User, error) {
-	user, err := u.Repository.Get(ID)
+func (u *userService) Get(ctx context.Context, userID int64) (*domain.User, error) {
+	user, err := u.Repository.Get(ctx, userID)
 	if err != nil {
 		return &domain.User{}, err
 	}

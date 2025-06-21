@@ -61,7 +61,8 @@ func (u *userHandler) GetUser(c *gin.Context) {
 		c.Error(customerror.NewBadRequestError("invalid user_id"))
 		return
 	}
-	user, err := u.Service.Get(int64(ID))
+
+	user, err := h.Service.Get(c, userID)
 	if err != nil {
 		c.Error(err)
 		return

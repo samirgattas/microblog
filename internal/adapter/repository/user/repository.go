@@ -16,14 +16,14 @@ func NewUserRepository(usersDB map[int64]domain.User) repository.UserRepository 
 	return &userRepository{usersDB: usersDB}
 }
 
-func (u *userRepository) Save(user *domain.User) error {
+func (u *userRepository) Save(ctx context.Context, user *domain.User) error {
 	now := time.Now()
 	user.CreatedAt = &now
 	u.usersDB[user.ID] = *user
 	return nil
 }
 
-func (u *userRepository) Get(ID int64) (*domain.User, error) {
+func (u *userRepository) Get(ctx context.Context, userID int64) (*domain.User, error) {
 	user := domain.User{}
 	user = u.usersDB[ID]
 	if user.ID == 0 {

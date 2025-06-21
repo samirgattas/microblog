@@ -1,8 +1,11 @@
 package repository
 
-import "microblog/internal/core/domain"
+import (
+	"context"
+	"microblog/internal/core/domain"
+)
 
 type UserRepository interface {
-	Save(*domain.User) ( error)
-	Get(int64) (*domain.User, error)
+	Save(context.Context, *domain.User) error
+	Get(context.Context, int64) (*domain.User, error)
 }

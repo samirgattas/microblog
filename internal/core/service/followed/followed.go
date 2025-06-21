@@ -2,6 +2,7 @@ package followed
 
 import (
 	"context"
+	"log/slog"
 	"microblog/internal/core/domain"
 	"microblog/internal/core/lib/customerror"
 	"microblog/internal/core/port/repository"
@@ -22,13 +23,13 @@ func NewFollowedService(followedRepository repository.FollowedRepository, userRe
 
 func (s *followedService) Create(ctx context.Context, followed *domain.Followed) error {
 	// Check if the user id exists
-	_, err := s.userRepository.Get(followed.UserID)
+	_, err := s.userRepository.Get(ctx, followed.UserID)
 	if err != nil {
 		return err
 	}
 
 	// Check if the followed user id exists
-	_, err = s.userRepository.Get(followed.FollowedUserID)
+	_, err = s.userRepository.Get(ctx, followed.FollowedUserID)
 	if err != nil {
 		return err
 	}
