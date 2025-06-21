@@ -6,11 +6,46 @@ info:
   version: 0.0.1
   description: The main responsability of the Microblog API is to allow users to create posts, follow each other, watch what the followed users have posted.
 tags:
+  - name: User
+    description: Operating over user entity
   - name: Followed
     description: Operating over followed entity
   - name: Tweet
     description: Operating over tweet entity
 paths:
+  /users:
+    post:
+      tags:
+        - User
+      summary: Create a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationCommand'
+      responses:
+        '201':
+          description: Created a user entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreated'
+        '400':
+          description: Bad Request
+  /users/{id}:
+    get:
+      tags:
+        - User
+      summary: Get a user entity
+      responses:
+        '200':
+          description: Get a user entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreated'
+        '400':
+          description: Bad Request
   /followed:
     post:
       tags: 
@@ -170,6 +205,27 @@ paths:
 
 components:
   schemas:
+    UserCreationCommand:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
+        nick_name:
+          type: string
+          example: mynickname
+    UserCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
+        nick_name:
+          type: string
+          example: mynickname
+        created_at:
+          type: string
+          example: "2025-06-21T08:52:14.524903-03:00"
     FollowedCreationCommand:
       type: object
       properties:
