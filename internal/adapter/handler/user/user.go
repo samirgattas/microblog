@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log/slog"
 	"microblog/internal/core/domain"
@@ -25,13 +24,14 @@ func NewUserHandler(userService user.UserService) userhandler.UserHandler {
 	}
 }
 
-func (u *userHandler) CreateUser(c *gin.Context) {
+func (h *userHandler) CreateUser(c *gin.Context) {
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		slog.ErrorContext(c, "read all error")
 		c.Error(err)
 		return
 	}
+
 	user := &domain.User{}
 	err = json.Unmarshal(jsonData, &user)
 	if err != nil {
@@ -39,15 +39,17 @@ func (u *userHandler) CreateUser(c *gin.Context) {
 		c.Error(customerror.NewBadRequestError("invalid request body"))
 		return
 	}
-	err = u.Service.Create(user)
+
+	err = h.Service.Create(c, user)
 	if err != nil {
 		c.Error(err)
 		return
 	}
+
 	c.JSON(http.StatusOK, user)
 }
 
-func (u *userHandler) GetUser(c *gin.Context) {
+func (h *userHandler) GetUser(c *gin.Context) {
 	IDStr := c.Param("user_id")
 	if IDStr == "" {
 		slog.ErrorContext(c, "empty user_id")
@@ -67,5 +69,6 @@ func (u *userHandler) GetUser(c *gin.Context) {
 		c.Error(err)
 		return
 	}
+
 	c.JSON(http.StatusOK, user)
 }
