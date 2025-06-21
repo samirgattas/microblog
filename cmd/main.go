@@ -13,6 +13,8 @@ import (
 
 func main() {
 	usersDB := make(map[int64]domain.User)
+	followedDB := make(map[int64]domain.Followed)
+
 	// Create User repository
 	userRepository := user.NewUserRepository(usersDB)
 	// Create User service
