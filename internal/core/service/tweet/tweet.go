@@ -25,6 +25,12 @@ func NewTweetService(tweetRepository repository.TweetRepository, userRepository 
 }
 
 func (s *tweetService) Create(ctx context.Context, tweet *domain.Tweet) error {
+	// Check if the post does not exceeds the maximum length
+	if len(tweet.Post) > domain.MaxPostLength {
+		slog.ErrorContext(ctx, "post too long", slog.Any("post_length", len(tweet.Post)))
+		return customerror.NewBadRequestError("post too long")
+	}
+
 	// Check if the user exists
 	_, err := s.userRepository.Get(tweet.UserID)
 	if err != nil {
