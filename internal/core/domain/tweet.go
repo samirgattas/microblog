@@ -20,3 +20,14 @@ type TweetSearchParams struct {
 	Offset  int64
 	UserIDs []int64
 }
+
+type TweetsSearchResult struct {
+	Paging  Paging  `json:"paging"`
+	Results []Tweet `json:"results"`
+}
+
+type Paging struct {
+	Total  int64 `json:"total"`
+	Limit  int64 `json:"limit"`
+	Offset int64 `json:"offset"`
+}
