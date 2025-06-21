@@ -28,7 +28,7 @@ func NewFollowedHandler(followedService followedsrv.FollowedService) followed.Fo
 func (h *followedHandler) CreateFollowed(c *gin.Context) {
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		slog.Error("read all error")
+		slog.ErrorContext(c, "read all error")
 		c.Error(err)
 		return
 	}
@@ -36,7 +36,7 @@ func (h *followedHandler) CreateFollowed(c *gin.Context) {
 	followed := &domain.Followed{}
 	err = json.Unmarshal(jsonData, &followed)
 	if err != nil {
-		slog.Error("followed unmarshal error")
+		slog.ErrorContext(c, "followed unmarshal error")
 		c.Error(customerror.NewBadRequestError("invalid request body"))
 		return
 	}
@@ -53,14 +53,14 @@ func (h *followedHandler) CreateFollowed(c *gin.Context) {
 func (h *followedHandler) GetFollowed(c *gin.Context) {
 	IDStr := c.Param("followed_id")
 	if IDStr == "" {
-		slog.Error("empty followed_id")
+		slog.ErrorContext(c, "empty followed_id")
 		c.Error(customerror.NewBadRequestError("empty followed_id"))
 		return
 	}
 
 	ID, err := strconv.ParseInt(IDStr, 10, 64)
 	if err != nil {
-		slog.Error(fmt.Sprintf("invalid followed_id: %s", IDStr))
+		slog.ErrorContext(c, fmt.Sprintf("invalid followed_id: %s", IDStr))
 		c.Error(customerror.NewBadRequestError("invalid followed_id"))
 		return
 	}
@@ -75,20 +75,20 @@ func (h *followedHandler) GetFollowed(c *gin.Context) {
 func (h *followedHandler) UpdateFollowed(c *gin.Context) {
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		slog.Error("read all error")
+		slog.ErrorContext(c, "read all error")
 		c.Error(err)
 		return
 	}
 
 	followedIDStr := c.Param("followed_id")
 	if followedIDStr == "" {
-		slog.Error("empty followed_id")
+		slog.ErrorContext(c, "empty followed_id")
 		c.Error(customerror.NewBadRequestError("empty followed_id"))
 		return
 	}
 	followedID, err := strconv.ParseInt(followedIDStr, 10, 64)
 	if err != nil {
-		slog.Error(fmt.Sprintf("invalid followed_id: %s", followedIDStr))
+		slog.ErrorContext(c, fmt.Sprintf("invalid followed_id: %s", followedIDStr))
 		c.Error(customerror.NewBadRequestError("invalid followed_id"))
 		return
 	}
@@ -96,7 +96,7 @@ func (h *followedHandler) UpdateFollowed(c *gin.Context) {
 	followedPatchCmd := &domain.FollowedPatchCommand{}
 	err = json.Unmarshal(jsonData, &followedPatchCmd)
 	if err != nil {
-		slog.Error("followed unmarshal error")
+		slog.ErrorContext(c, "followed unmarshal error")
 		c.Error(customerror.NewBadRequestError("invalid request body"))
 		return
 	}
@@ -116,7 +116,7 @@ func (h *followedHandler) SearchFollowed(c *gin.Context) {
 	if userIDStr != "" {
 		userIDTmp, err := strconv.ParseInt(userIDStr, 10, 64)
 		if err != nil {
-			slog.Error(fmt.Sprintf("invalid user_id: %s", userIDStr))
+			slog.ErrorContext(c, fmt.Sprintf("invalid user_id: %s", userIDStr))
 			c.Error(customerror.NewBadRequestError("invalid user_id"))
 			return
 		}
@@ -128,7 +128,7 @@ func (h *followedHandler) SearchFollowed(c *gin.Context) {
 	if followedUserIDStr != "" {
 		followedUserIDTmp, err := strconv.ParseInt(followedUserIDStr, 10, 64)
 		if err != nil {
-			slog.Error(fmt.Sprintf("invalid user_id: %s", followedUserIDStr))
+			slog.ErrorContext(c, fmt.Sprintf("invalid user_id: %s", followedUserIDStr))
 			c.Error(customerror.NewBadRequestError("invalid user_id"))
 			return
 		}

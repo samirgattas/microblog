@@ -92,6 +92,7 @@ func (s *followedService) SearchFollowed(ctx context.Context, userID *int64, fol
 
 	// Followed does not exist
 	if len(followed) == 0 {
+		slog.ErrorContext(ctx, "empty followed result")
 		return []domain.Followed{}, customerror.NewNotFoundError("followed")
 	}
 

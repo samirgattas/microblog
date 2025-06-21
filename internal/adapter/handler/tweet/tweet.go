@@ -26,7 +26,6 @@ func (h *tweetHandler) CreateTweet(c *gin.Context) {
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		slog.ErrorContext(c, err.Error())
-		slog.Error(err.Error())
 		c.Error(customerror.NewBadRequestError("invalid format"))
 		return
 	}
@@ -35,7 +34,6 @@ func (h *tweetHandler) CreateTweet(c *gin.Context) {
 	err = json.Unmarshal(jsonData, &tweet)
 	if err != nil {
 		slog.ErrorContext(c, err.Error())
-		slog.Error(err.Error())
 		c.Error(customerror.NewBadRequestError("invalid request body"))
 		return
 	}

@@ -28,14 +28,14 @@ func NewUserHandler(userService user.UserService) userhandler.UserHandler {
 func (u *userHandler) CreateUser(c *gin.Context) {
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		slog.Error("read all error")
+		slog.ErrorContext(c, "read all error")
 		c.Error(err)
 		return
 	}
 	user := &domain.User{}
 	err = json.Unmarshal(jsonData, &user)
 	if err != nil {
-		slog.Error("user unmarshal error")
+		slog.ErrorContext(c, "user unmarshal error")
 		c.Error(customerror.NewBadRequestError("invalid request body"))
 		return
 	}
@@ -50,14 +50,14 @@ func (u *userHandler) CreateUser(c *gin.Context) {
 func (u *userHandler) GetUser(c *gin.Context) {
 	IDStr := c.Param("user_id")
 	if IDStr == "" {
-		slog.Error("empty user_id")
+		slog.ErrorContext(c, "empty user_id")
 		c.Error(customerror.NewBadRequestError("empty user_id"))
 		return
 	}
 
 	ID, err := strconv.Atoi(IDStr)
 	if err != nil {
-		slog.Error(fmt.Sprintf("invalid user_id: %s", IDStr))
+		slog.ErrorContext(c, "invalid user_id", slog.Any("user_id", userIDStr))
 		c.Error(customerror.NewBadRequestError("invalid user_id"))
 		return
 	}

@@ -27,7 +27,7 @@ func (u *userRepository) Get(ID int64) (*domain.User, error) {
 	user := domain.User{}
 	user = u.usersDB[ID]
 	if user.ID == 0 {
-		slog.Error("user not found")
+		slog.ErrorContext(ctx, "user not found", slog.Any("user_id", userID))
 		return &domain.User{}, customerror.NewNotFoundError("user")
 	}
 	return &user, nil

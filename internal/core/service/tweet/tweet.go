@@ -70,7 +70,6 @@ func (s *tweetService) Search(ctx context.Context, followerUserID int64, limit i
 
 	followedUserIDs := []int64{}
 	for _, f := range followed {
-		slog.InfoContext(ctx, "followed user_id", slog.Any("followed_user_id", f.FollowedUserID))
 		followedUserIDs = append(followedUserIDs, f.FollowedUserID)
 	}
 
