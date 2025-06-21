@@ -4,11 +4,14 @@ import (
 	followedhandler "microblog/internal/adapter/handler/followed"
 	"microblog/internal/adapter/handler/healthcheck"
 	"microblog/internal/adapter/handler/middleware"
+	tweethandler "microblog/internal/adapter/handler/tweet"
 	userhandler "microblog/internal/adapter/handler/user"
 	"microblog/internal/adapter/repository/followed"
+	"microblog/internal/adapter/repository/tweet"
 	"microblog/internal/adapter/repository/user"
 	"microblog/internal/core/domain"
 	followedservice "microblog/internal/core/service/followed"
+	tweetservice "microblog/internal/core/service/tweet"
 	userservice "microblog/internal/core/service/user"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +20,7 @@ import (
 func main() {
 	usersDB := make(map[int64]domain.User)
 	followedDB := make(map[int64]domain.Followed)
+	tweetDB := make(map[int64]domain.Tweet)
 
 	// Create User repository
 	userRepository := user.NewUserRepository(usersDB)
@@ -31,6 +35,13 @@ func main() {
 	followedService := followedservice.NewFollowedService(followedRepository, userRepository)
 	// Create Followed handler
 	followedHandler := followedhandler.NewFollowedHandler(followedService)
+
+	// Create Tweet repository
+	tweetRepository := tweet.NewTweetRepository(tweetDB)
+	// Create Tweet service
+	tweetService := tweetservice.NewTweetService(tweetRepository, userRepository, followedRepository)
+	// Create Tweet handler
+	tweetHandler := tweethandler.NewTweetHandler(tweetService)
 
 	// Create HealthCheckHandler
 	healthCheckHandler := healthcheck.NewHealthCheckHandler()
