@@ -63,6 +63,11 @@ func main() {
 	router.PATCH("/followed/:followed_id", followedHandler.UpdateFollowed)
 	router.GET("/followed", followedHandler.SearchFollowed)
 
+	// Tweet
+	router.POST("/tweets", tweetHandler.CreateTweet)
+	router.GET("/tweets/:tweet_id", tweetHandler.GetTweet)
+	router.GET("/tweets", tweetHandler.SearchTweets)
+
 	// Run server
 	router.Run("localhost:8080")
 }
