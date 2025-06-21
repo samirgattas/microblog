@@ -4,7 +4,9 @@ import (
 	"time"
 )
 
-var (
+const (
+	MaxPostLength = 240
+
 	MaxLimit = int64(5)
 )
 
