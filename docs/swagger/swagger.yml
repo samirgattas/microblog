@@ -8,6 +8,8 @@ info:
 tags:
   - name: Followed
     description: Operating over followed entity
+  - name: Tweet
+    description: Operating over tweet entity
 paths:
   /followed:
     post:
@@ -94,6 +96,78 @@ paths:
           description: Bad Request
         '404': 
           description: Not Found
+  /tweets:
+    post:
+      tags:
+        - Tweet
+      summary: Create a tweet
+      requestBody:
+        description: Tweet creation command
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TweetCreationCommand'
+      responses:
+        '201':
+          description: Tweet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TweetCreated'
+        '400':
+          description: Bad Request
+    get:
+      tags:
+        - Tweet
+      summary: Search existing tweets
+      parameters:
+        - in: query
+          name: user_id
+          description: The user who follows
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: offset
+          description: Number of results to skip for paggination
+          schema:
+            type: integer
+          required: false
+        - in: query
+          name: limit
+          description: Maximum number of results to return
+          schema:
+            type: integer
+          required: false
+      responses:
+        '200':
+          description: Get tweet entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TweetsSearched'
+        '400':
+          description: Bad Request
+  /tweets/{id}:
+    get: 
+      tags:
+        - Tweet
+      summary: Search existing tweets
+      responses:
+        '200':
+          description: Get tweet entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TweetCreated'
+        '400':
+          description: Bad Request
+        '404':
+          description: NotFound
+        
+
+
 components:
   schemas:
     FollowedCreationCommand:
@@ -142,3 +216,46 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FollowedCreated'
+    TweetCreationCommand:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1234
+        'post':
+          type: string
+          example: This is my post
+    TweetCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        user_id:
+          type: integer
+          example: 1234
+        'post':
+          type: string
+          example: This is my post
+        created_at:
+          type: string
+          example: "2025-06-21T15:54:34.044666-03:00"
+    TweetsSearched:
+      type: object
+      properties:
+        paging:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 1
+            limit:
+              type: integer
+              example: 10
+            offset:
+              type: integer
+              example: 0
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TweetCreated'
