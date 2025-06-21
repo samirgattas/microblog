@@ -1,0 +1,18 @@
+dir: internal/mock
+filename: "{{.InterfaceName}}.go"
+pkgname: mocks
+packages:
+  github.com/samirgattas/microblog/internal/core/port/repository:
+    interfaces:
+      UserRepository:
+      FollowedRepository:
+      TweetRepository:
+  github.com/samirgattas/microblog/internal/core/port/service/user:
+    interfaces:
+      UserService:
+  github.com/samirgattas/microblog/internal/core/port/service/followed:
+    interfaces:
+      FollowedService:
+  github.com/samirgattas/microblog/internal/core/port/service/tweet:
+    interfaces:
+      TweetService:
