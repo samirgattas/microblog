@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
-	"microblog/internal/core/domain"
-	"microblog/internal/core/lib/customerror"
-	"microblog/internal/core/port/handler/tweet"
-	tweetsrv "microblog/internal/core/port/service/tweet"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samirgattas/microblog/internal/core/domain"
+	"github.com/samirgattas/microblog/internal/core/lib/customerror"
+	"github.com/samirgattas/microblog/internal/core/port/handler/tweet"
+	tweetsrv "github.com/samirgattas/microblog/internal/core/port/service/tweet"
 )
 
 type tweetHandler struct {

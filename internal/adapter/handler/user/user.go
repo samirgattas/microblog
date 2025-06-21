@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
-	"microblog/internal/core/domain"
-	"microblog/internal/core/lib/customerror"
-	userhandler "microblog/internal/core/port/handler/user"
-	"microblog/internal/core/port/service/user"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samirgattas/microblog/internal/core/domain"
+	"github.com/samirgattas/microblog/internal/core/lib/customerror"
+	userhandler "github.com/samirgattas/microblog/internal/core/port/handler/user"
+	"github.com/samirgattas/microblog/internal/core/port/service/user"
 )
 
 type userHandler struct {

@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"microblog/internal/core/lib/customerror"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samirgattas/microblog/internal/core/lib/customerror"
 )
 
 // ErrorHandler captures errors and returns a consistent JSON error response

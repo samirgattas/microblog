@@ -1,20 +1,19 @@
 package main
 
 import (
-	followedhandler "microblog/internal/adapter/handler/followed"
-	"microblog/internal/adapter/handler/healthcheck"
-	"microblog/internal/adapter/handler/middleware"
-	tweethandler "microblog/internal/adapter/handler/tweet"
-	userhandler "microblog/internal/adapter/handler/user"
-	"microblog/internal/adapter/repository/followed"
-	"microblog/internal/adapter/repository/tweet"
-	"microblog/internal/adapter/repository/user"
-	"microblog/internal/core/domain"
-	followedservice "microblog/internal/core/service/followed"
-	tweetservice "microblog/internal/core/service/tweet"
-	userservice "microblog/internal/core/service/user"
-
 	"github.com/gin-gonic/gin"
+	followedhandler "github.com/samirgattas/microblog/internal/adapter/handler/followed"
+	"github.com/samirgattas/microblog/internal/adapter/handler/healthcheck"
+	"github.com/samirgattas/microblog/internal/adapter/handler/middleware"
+	tweethandler "github.com/samirgattas/microblog/internal/adapter/handler/tweet"
+	userhandler "github.com/samirgattas/microblog/internal/adapter/handler/user"
+	"github.com/samirgattas/microblog/internal/adapter/repository/followed"
+	"github.com/samirgattas/microblog/internal/adapter/repository/tweet"
+	"github.com/samirgattas/microblog/internal/adapter/repository/user"
+	"github.com/samirgattas/microblog/internal/core/domain"
+	followedservice "github.com/samirgattas/microblog/internal/core/service/followed"
+	tweetservice "github.com/samirgattas/microblog/internal/core/service/tweet"
+	userservice "github.com/samirgattas/microblog/internal/core/service/user"
 )
 
 func main() {

@@ -2,7 +2,8 @@ package followed
 
 import (
 	"context"
-	"microblog/internal/core/domain"
+
+	"github.com/samirgattas/microblog/internal/core/domain"
 )
 
 type FollowedService interface {
