@@ -50,14 +50,14 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 }
 
 func (h *userHandler) GetUser(c *gin.Context) {
-user	IDStr := c.Param("user_id")
+	userIDStr := c.Param("user_id")
 	if userIDStr == "" {
 		slog.ErrorContext(c, "empty user_id")
 		c.Error(customerror.NewBadRequestError("empty user_id"))
 		return
 	}
 
-	ID, err := strconv.Atoi(IDStr)
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
 		slog.ErrorContext(c, "invalid user_id", slog.Any("user_id", userIDStr))
 		c.Error(customerror.NewBadRequestError("invalid user_id"))
