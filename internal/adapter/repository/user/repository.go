@@ -20,15 +20,15 @@ func NewUserRepository(usersDB inmemorystore.Store) repository.UserRepository {
 	return &userRepository{usersDB: usersDB}
 }
 
-func (u *userRepository) Save(ctx context.Context, user *domain.User) error {
+func (r *userRepository) Save(ctx context.Context, user *domain.User) error {
 	now := time.Now()
 	user.CreatedAt = &now
-	u.usersDB.SaveWithID(user.ID, *user)
+	r.usersDB.SaveWithID(user.ID, *user)
 	return nil
 }
 
-func (u *userRepository) Get(ctx context.Context, userID int64) (*domain.User, error) {
-	item, err := u.usersDB.Get(userID)
+func (r *userRepository) Get(ctx context.Context, userID int64) (*domain.User, error) {
+	item, err := r.usersDB.Get(userID)
 	if err != nil {
 		if errors.Is(err, inmemorystore.ErrNotFound) {
 			slog.ErrorContext(ctx, "user not found", slog.Any("user_id", userID))
