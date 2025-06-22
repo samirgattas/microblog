@@ -255,6 +255,25 @@ func TestCreateTweet_PostTooLongError(t *testing.T) {
 	assert.Equal(t, `{"message":"Message: post too long, Status: 400","status":400}`, string(responseData))
 }
 
+// GET TWEET - GET /tweets/:tweet_id
+
+func TestGetTweet_Ok(t *testing.T) {
+	r := initTest()
+	defer CleanDBs()
+
+	tweetDB[100] = domain.Tweet{ID: 100, UserID: 12, Post: "Tweet 100!"}
+
+	req, _ := http.NewRequest("GET", "/tweets/100", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	responseData, err := io.ReadAll(w.Body)
+	assert.Nil(t, err)
+	expectedResp := `{"id":100,"user_id":12,"post":"Tweet 100!","created_at":null}`
+	assert.Equal(t, expectedResp, string(responseData))
+}
+
 // SEARCH TWEETS - GET /tweets
 
 func TestSearchTweets_Ok(t *testing.T) {
