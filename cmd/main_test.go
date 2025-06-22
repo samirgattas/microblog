@@ -279,7 +279,7 @@ func TestSearchTweets_Ok(t *testing.T) {
 	assert.Equal(t, expectedResp, string(responseData))
 }
 
-func TestSearchTweets_OffsetOk(t *testing.T) {
+func TestSearchTweets_UsePaging_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
