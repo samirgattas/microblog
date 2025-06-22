@@ -17,33 +17,10 @@ import (
 )
 
 func main() {
-	usersDB := make(map[int64]domain.User)
-	followedDB := make(map[int64]domain.Followed)
-	tweetDB := make(map[int64]domain.Tweet)
-
-	// Create User repository
-	userRepository := user.NewUserRepository(usersDB)
-	// Create User service
-	userService := userservice.NewUserService(userRepository)
-	// Create User handler
-	userHandler := userhandler.NewUserHandler(userService)
-
-	// Create Followed repository
-	followedRepository := followed.NewFollowedRepository(followedDB)
-	// Create Followed service
-	followedService := followedservice.NewFollowedService(followedRepository, userRepository)
-	// Create Followed handler
-	followedHandler := followedhandler.NewFollowedHandler(followedService)
-
-	// Create Tweet repository
-	tweetRepository := tweet.NewTweetRepository(tweetDB)
-	// Create Tweet service
-	tweetService := tweetservice.NewTweetService(tweetRepository, userRepository, followedRepository)
-	// Create Tweet handler
-	tweetHandler := tweethandler.NewTweetHandler(tweetService)
-
-	// Create HealthCheckHandler
-	healthCheckHandler := healthcheck.NewHealthCheckHandler()
+	userDB := inmemorystorage.NewStore()
+	c := &config.Config{}
+	c = c.NewConfig(userDB)
+	handler := Container(c)
 
 	router := gin.Default()
 	router.Use(middleware.ErrorHandler())
