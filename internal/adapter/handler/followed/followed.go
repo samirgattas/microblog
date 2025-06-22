@@ -47,7 +47,7 @@ func (h *followedHandler) CreateFollowed(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, followed)
+	c.JSON(http.StatusCreated, followed)
 }
 
 func (h *followedHandler) GetFollowed(c *gin.Context) {

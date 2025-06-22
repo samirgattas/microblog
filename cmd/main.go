@@ -2,71 +2,55 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	followedhandler "github.com/samirgattas/microblog/internal/adapter/handler/followed"
-	"github.com/samirgattas/microblog/internal/adapter/handler/healthcheck"
+	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/adapter/handler/middleware"
-	tweethandler "github.com/samirgattas/microblog/internal/adapter/handler/tweet"
-	userhandler "github.com/samirgattas/microblog/internal/adapter/handler/user"
-	"github.com/samirgattas/microblog/internal/adapter/repository/followed"
-	"github.com/samirgattas/microblog/internal/adapter/repository/tweet"
-	"github.com/samirgattas/microblog/internal/adapter/repository/user"
-	"github.com/samirgattas/microblog/internal/core/domain"
-	followedservice "github.com/samirgattas/microblog/internal/core/service/followed"
-	tweetservice "github.com/samirgattas/microblog/internal/core/service/tweet"
-	userservice "github.com/samirgattas/microblog/internal/core/service/user"
+	inmemorystorage "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_storage"
+	followedhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/followed"
+	healthcheckhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/healthcheck"
+	tweethandlerr "github.com/samirgattas/microblog/internal/core/port/handler/tweet"
+	userhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/user"
 )
 
+type Handler struct {
+	healthCheckHandler healthcheckhandlerr.HealthCheckHandler
+	userHandler        userhandlerr.UserHandler
+	followedHandler    followedhandlerr.FollowedHandler
+	tweetHandler       tweethandlerr.TweetHandler
+}
+
 func main() {
-	usersDB := make(map[int64]domain.User)
-	followedDB := make(map[int64]domain.Followed)
-	tweetDB := make(map[int64]domain.Tweet)
-
-	// Create User repository
-	userRepository := user.NewUserRepository(usersDB)
-	// Create User service
-	userService := userservice.NewUserService(userRepository)
-	// Create User handler
-	userHandler := userhandler.NewUserHandler(userService)
-
-	// Create Followed repository
-	followedRepository := followed.NewFollowedRepository(followedDB)
-	// Create Followed service
-	followedService := followedservice.NewFollowedService(followedRepository, userRepository)
-	// Create Followed handler
-	followedHandler := followedhandler.NewFollowedHandler(followedService)
-
-	// Create Tweet repository
-	tweetRepository := tweet.NewTweetRepository(tweetDB)
-	// Create Tweet service
-	tweetService := tweetservice.NewTweetService(tweetRepository, userRepository, followedRepository)
-	// Create Tweet handler
-	tweetHandler := tweethandler.NewTweetHandler(tweetService)
-
-	// Create HealthCheckHandler
-	healthCheckHandler := healthcheck.NewHealthCheckHandler()
+	userDB := inmemorystorage.NewStore()
+	c := &config.Config{}
+	c = c.NewConfig(userDB)
+	handler := Container(c)
 
 	router := gin.Default()
+
+	Routes(router, handler)
+	
+	// Run server
+	router.Run("localhost:8080")
+}
+
+func Routes(router *gin.Engine, h Handler) {
 	router.Use(middleware.ErrorHandler())
 
 	// Routes
 	// Health check
-	router.GET("/ping", healthCheckHandler.HealthCheck)
+	router.GET("/ping", h.healthCheckHandler.HealthCheck)
 
 	// User
-	router.POST("/users", userHandler.CreateUser)
-	router.GET("/users/:user_id", userHandler.GetUser)
+	router.POST("/users", h.userHandler.CreateUser)
+	router.GET("/users/:user_id", h.userHandler.GetUser)
 
 	// Followed
-	router.POST("/followed", followedHandler.CreateFollowed)
-	router.GET("/followed/:followed_id", followedHandler.GetFollowed)
-	router.PATCH("/followed/:followed_id", followedHandler.UpdateFollowed)
-	router.GET("/followed", followedHandler.SearchFollowed)
+	router.POST("/followed", h.followedHandler.CreateFollowed)
+	router.GET("/followed/:followed_id", h.followedHandler.GetFollowed)
+	router.PATCH("/followed/:followed_id", h.followedHandler.UpdateFollowed)
+	router.GET("/followed", h.followedHandler.SearchFollowed)
 
 	// Tweet
-	router.POST("/tweets", tweetHandler.CreateTweet)
-	router.GET("/tweets/:tweet_id", tweetHandler.GetTweet)
-	router.GET("/tweets", tweetHandler.SearchTweets)
-
-	// Run server
-	router.Run("localhost:8080")
+	router.POST("/tweets", h.tweetHandler.CreateTweet)
+	router.GET("/tweets/:tweet_id", h.tweetHandler.GetTweet)
+	router.GET("/tweets", h.tweetHandler.SearchTweets)
 }

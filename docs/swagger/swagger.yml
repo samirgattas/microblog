@@ -211,7 +211,7 @@ components:
         id:
           type: integer
           example: 1234
-        nick_name:
+        nickname:
           type: string
           example: mynickname
     UserCreated:
@@ -220,7 +220,7 @@ components:
         id:
           type: integer
           example: 1234
-        nick_name:
+        nickname:
           type: string
           example: mynickname
         created_at:
