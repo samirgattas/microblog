@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/adapter/handler/middleware"
-	inmemorystorage "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_storage"
+	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
 	followedhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/followed"
 	healthcheckhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/healthcheck"
 	tweethandlerr "github.com/samirgattas/microblog/internal/core/port/handler/tweet"
@@ -19,7 +19,7 @@ type Handler struct {
 }
 
 func main() {
-	userDB := inmemorystorage.NewStore()
+	userDB := inmemorystore.NewStore()
 	c := &config.Config{}
 	c = c.NewConfig(userDB)
 	handler := Container(c)
@@ -27,7 +27,7 @@ func main() {
 	router := gin.Default()
 
 	Routes(router, handler)
-	
+
 	// Run server
 	router.Run("localhost:8080")
 }

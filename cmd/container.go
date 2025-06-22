@@ -10,16 +10,16 @@ import (
 	"github.com/samirgattas/microblog/internal/adapter/repository/tweet"
 	"github.com/samirgattas/microblog/internal/adapter/repository/user"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	inmemorystorage "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_storage"
+	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
 	followedservice "github.com/samirgattas/microblog/internal/core/service/followed"
 	tweetservice "github.com/samirgattas/microblog/internal/core/service/tweet"
 	userservice "github.com/samirgattas/microblog/internal/core/service/user"
 )
 
-func Container(config *config.Config) Handler {
+func Container(c *config.Config) Handler {
 	followedDB := make(map[int64]domain.Followed)
 	tweetDB := make(map[int64]domain.Tweet)
-	usersDB := inmemorystorage.NewStore()
+	usersDB := inmemorystore.NewStore()
 	// Create User repository
 	userRepository := user.NewUserRepository(usersDB)
 	// Create User service
