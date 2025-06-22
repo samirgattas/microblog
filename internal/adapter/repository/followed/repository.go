@@ -41,12 +41,13 @@ func (r *followedRepository) Get(ctx context.Context, ID int64) (*domain.Followe
 }
 
 func (r *followedRepository) Update(ctx context.Context, followed *domain.Followed) error {
+	followedID := followed.ID
 	now := time.Now()
 	followed.UpdatedAt = &now
-	if _, ok := r.followedDB[followed.UserID]; !ok {
+	if _, ok := r.followedDB[followedID]; !ok {
 		return customerror.NewNotFoundError("followed")
 	}
-	r.followedDB[followed.UserID] = *followed
+	r.followedDB[followedID] = *followed
 	return nil
 }
 
