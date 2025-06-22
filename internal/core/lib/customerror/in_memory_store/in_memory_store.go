@@ -16,6 +16,7 @@ type Store interface {
 	Get(ID int64) (interface{}, error)
 	Update(ID int64, newItem interface{}) error
 	LastID() int64
+	Drop()
 }
 
 type store struct {
