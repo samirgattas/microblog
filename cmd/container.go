@@ -16,7 +16,7 @@ import (
 	userservice "github.com/samirgattas/microblog/internal/core/service/user"
 )
 
-func Container(config *config.Config) Handler {
+func Container(c *config.Config) Handler {
 	followedDB := make(map[int64]domain.Followed)
 	tweetDB := make(map[int64]domain.Tweet)
 	usersDB := inmemorystore.NewStore()
