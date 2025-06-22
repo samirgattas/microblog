@@ -1,19 +1,23 @@
 package config
 
-import inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
+import (
+	"github.com/samirgattas/microblog/internal/core/domain"
+	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
+)
 
 var c *Config
 
 type Config struct {
-	UserDB inmemorystore.Store
+	UserDB     inmemorystore.Store
+	FollowedDB map[int64]domain.Followed
+	TweetDB    map[int64]domain.Tweet
 }
 
-func (c *Config) NewConfig(userDB inmemorystore.Store) *Config {
-	if c != nil {
-		return c
-	}
+func (c *Config) NewConfig(userDB inmemorystore.Store, followedDB map[int64]domain.Followed, tweetDB map[int64]domain.Tweet) *Config {
 	c = &Config{
-		UserDB: userDB,
+		UserDB:     userDB,
+		FollowedDB: followedDB,
+		TweetDB:    tweetDB,
 	}
 	return c
 }
