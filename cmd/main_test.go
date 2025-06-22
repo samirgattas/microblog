@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	inmemorystorage "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_storage"
+	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +22,7 @@ var (
 )
 
 func initTest() *gin.Engine {
-	userDB := inmemorystorage.NewStore()
+	userDB := inmemorystore.NewStore()
 	c = &config.Config{}
 	c = c.NewConfig(userDB)
 	handler := Container(c)
