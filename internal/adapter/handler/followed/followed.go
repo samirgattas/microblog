@@ -10,16 +10,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
-	"github.com/samirgattas/microblog/internal/core/port/handler/followed"
-	followedsrv "github.com/samirgattas/microblog/internal/core/port/service/followed"
+	"github.com/samirgattas/microblog/internal/core/port/handler"
+	"github.com/samirgattas/microblog/internal/core/port/service"
+	"github.com/samirgattas/microblog/lib/customerror"
 )
 
 type followedHandler struct {
-	service followedsrv.FollowedService
+	service service.FollowedService
 }
 
-func NewFollowedHandler(followedService followedsrv.FollowedService) followed.FollowedHandler {
+func NewFollowedHandler(followedService service.FollowedService) handler.FollowedHandler {
 	return &followedHandler{
 		service: followedService,
 	}

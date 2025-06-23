@@ -9,16 +9,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
-	userhandler "github.com/samirgattas/microblog/internal/core/port/handler/user"
-	"github.com/samirgattas/microblog/internal/core/port/service/user"
+	"github.com/samirgattas/microblog/internal/core/port/handler"
+	"github.com/samirgattas/microblog/internal/core/port/service"
+	"github.com/samirgattas/microblog/lib/customerror"
 )
 
 type userHandler struct {
-	Service user.UserService
+	Service service.UserService
 }
 
-func NewUserHandler(userService user.UserService) userhandler.UserHandler {
+func NewUserHandler(userService service.UserService) handler.UserHandler {
 	return &userHandler{
 		Service: userService,
 	}

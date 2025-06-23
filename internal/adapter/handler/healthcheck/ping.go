@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/samirgattas/microblog/internal/core/port/handler/healthcheck"
+	"github.com/samirgattas/microblog/internal/core/port/handler"
 )
 
 type healthCheckHandler struct {
 }
 
-func NewHealthCheckHandler() healthcheck.HealthCheckHandler {
+func NewHealthCheckHandler() handler.HealthCheckHandler {
 	return &healthCheckHandler{}
 }
 

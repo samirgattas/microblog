@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
-	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
 	"github.com/samirgattas/microblog/internal/core/port/repository"
+	"github.com/samirgattas/microblog/lib/customerror"
+	inmemorystore "github.com/samirgattas/microblog/lib/in_memory_store"
 )
 
 type userRepository struct {

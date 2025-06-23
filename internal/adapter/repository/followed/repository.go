@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
 	"github.com/samirgattas/microblog/internal/core/port/repository"
+	"github.com/samirgattas/microblog/lib/customerror"
 )
 
 var followedID = int64(0) // This is the entity id
