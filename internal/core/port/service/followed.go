@@ -1,4 +1,4 @@
-package followed
+package service
 
 import (
 	"context"
