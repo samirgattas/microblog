@@ -5,18 +5,15 @@ import (
 	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/adapter/handler/middleware"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
-	followedhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/followed"
-	healthcheckhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/healthcheck"
-	tweethandlerr "github.com/samirgattas/microblog/internal/core/port/handler/tweet"
-	userhandlerr "github.com/samirgattas/microblog/internal/core/port/handler/user"
+	"github.com/samirgattas/microblog/internal/core/port/handler"
+	inmemorystore "github.com/samirgattas/microblog/lib/in_memory_store"
 )
 
 type Handler struct {
-	healthCheckHandler healthcheckhandlerr.HealthCheckHandler
-	userHandler        userhandlerr.UserHandler
-	followedHandler    followedhandlerr.FollowedHandler
-	tweetHandler       tweethandlerr.TweetHandler
+	healthCheckHandler handler.HealthCheckHandler
+	userHandler        handler.UserHandler
+	followedHandler    handler.FollowedHandler
+	tweetHandler       handler.TweetHandler
 }
 
 func main() {
@@ -25,11 +22,11 @@ func main() {
 	tweetDB := make(map[int64]domain.Tweet)
 	c := &config.Config{}
 	c = c.NewConfig(userDB, followedDB, tweetDB)
-	handler := Container(c)
+	h := Container(c)
 
 	router := gin.Default()
 
-	Routes(router, handler)
+	Routes(router, h)
 
 	// Run server
 	router.Run("localhost:8080")

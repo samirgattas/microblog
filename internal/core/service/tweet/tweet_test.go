@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
 	mocks "github.com/samirgattas/microblog/internal/mock"
+	"github.com/samirgattas/microblog/lib/customerror"
 	"github.com/stretchr/testify/assert"
 )
 

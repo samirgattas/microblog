@@ -6,9 +6,9 @@ import (
 	"log/slog"
 
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
 	"github.com/samirgattas/microblog/internal/core/port/repository"
-	"github.com/samirgattas/microblog/internal/core/port/service/tweet"
+	"github.com/samirgattas/microblog/internal/core/port/service"
+	"github.com/samirgattas/microblog/lib/customerror"
 )
 
 type tweetService struct {
@@ -17,7 +17,7 @@ type tweetService struct {
 	followedRepository repository.FollowedRepository
 }
 
-func NewTweetService(tweetRepository repository.TweetRepository, userRepository repository.UserRepository, followedRepository repository.FollowedRepository) tweet.TweetService {
+func NewTweetService(tweetRepository repository.TweetRepository, userRepository repository.UserRepository, followedRepository repository.FollowedRepository) service.TweetService {
 	return &tweetService{
 		repository:         tweetRepository,
 		userRepository:     userRepository,

@@ -5,9 +5,9 @@ import (
 	"log/slog"
 
 	"github.com/samirgattas/microblog/internal/core/domain"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
 	"github.com/samirgattas/microblog/internal/core/port/repository"
-	"github.com/samirgattas/microblog/internal/core/port/service/followed"
+	"github.com/samirgattas/microblog/internal/core/port/service"
+	"github.com/samirgattas/microblog/lib/customerror"
 )
 
 type followedService struct {
@@ -15,7 +15,7 @@ type followedService struct {
 	userRepository repository.UserRepository
 }
 
-func NewFollowedService(followedRepository repository.FollowedRepository, userRepository repository.UserRepository) followed.FollowedService {
+func NewFollowedService(followedRepository repository.FollowedRepository, userRepository repository.UserRepository) service.FollowedService {
 	return &followedService{
 		repository:     followedRepository,
 		userRepository: userRepository,

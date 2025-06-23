@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/samirgattas/microblog/internal/core/lib/customerror"
+	"github.com/samirgattas/microblog/lib/customerror"
 )
 
 // ErrorHandler captures errors and returns a consistent JSON error response

@@ -5,14 +5,14 @@ import (
 
 	"github.com/samirgattas/microblog/internal/core/domain"
 	"github.com/samirgattas/microblog/internal/core/port/repository"
-	"github.com/samirgattas/microblog/internal/core/port/service/user"
+	"github.com/samirgattas/microblog/internal/core/port/service"
 )
 
 type userService struct {
 	Repository repository.UserRepository
 }
 
-func NewUserService(userRepository repository.UserRepository) user.UserService {
+func NewUserService(userRepository repository.UserRepository) service.UserService {
 	return &userService{
 		Repository: userRepository,
 	}

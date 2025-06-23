@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	inmemorystore "github.com/samirgattas/microblog/internal/core/lib/customerror/in_memory_store"
+	inmemorystore "github.com/samirgattas/microblog/lib/in_memory_store"
 	"github.com/stretchr/testify/assert"
 )
 
