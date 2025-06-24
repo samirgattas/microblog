@@ -21,3 +21,11 @@ func (c *Config) NewConfig(userDB inmemorystore.Store, followedDB map[int64]doma
 	}
 	return c
 }
+
+func isDockerEnv() bool {
+	if _, err := os.Stat("/.dockerenv"); err == nil {
+		return true
+	}
+
+	return false
+}
