@@ -29,7 +29,9 @@ func main() {
 	Routes(router, h)
 
 	// Run server
-	router.Run("localhost:8080")
+	if err := router.Run(c.Domain + ":8080"); err != nil {
+		os.Exit(1)
+	}
 }
 
 func Routes(router *gin.Engine, h Handler) {
