@@ -10,10 +10,14 @@ import (
 var c *Config
 
 type Config struct {
-	UserDB     inmemorystore.Store
+	UsersDB    inmemorystore.Store
 	FollowedDB map[int64]domain.Followed
 	TweetDB    map[int64]domain.Tweet
 	Domain     string
+	PortDB     int64
+	DomainDB   string
+	UserDB     string
+	PasswordDB string
 }
 
 func (c *Config) NewConfig(userDB inmemorystore.Store, followedDB map[int64]domain.Followed, tweetDB map[int64]domain.Tweet) *Config {
@@ -22,10 +26,14 @@ func (c *Config) NewConfig(userDB inmemorystore.Store, followedDB map[int64]doma
 		domain = ""
 	}
 	c = &Config{
-		UserDB:     userDB,
+		UsersDB:    userDB,
 		FollowedDB: followedDB,
 		TweetDB:    tweetDB,
 		Domain:     domain,
+		PortDB:     3307,
+		DomainDB:   "127.0.0.1",
+		UserDB:     "root",
+		PasswordDB: "root",
 	}
 	return c
 }
