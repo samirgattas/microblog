@@ -1,5 +1,7 @@
 # Microblog
 
+This project is like a micro-Twitter. It allows you create users, follow them, post tweets and view their timeline.
+
 # Getting started
 
 ## Go installation
