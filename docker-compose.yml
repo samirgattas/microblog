@@ -7,8 +7,12 @@ services:
       MYSQL_DATABASE: 'microblog'
       MYSQL_PASSWORD: 'root'
       MYSQL_ROOT_PASSWORD: 'root'
+
+    # Indicate <port_to_connect>:<exposed_port>
     ports:
       - '3307:3306'
+
+    # Copy sql file that create tables
     volumes:
-      - /sql/schema.sql:/docker-entrypoint-initdb.d
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
