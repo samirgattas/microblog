@@ -53,7 +53,7 @@ $ brew install colima
 
 ## Run the project
 
-The project use the port 8080. It is important to check if the port is free
+The project uses the port 8080. It is important to check if the port is free
 ```
 lsof -i :8080
 ```
@@ -84,4 +84,5 @@ $ make dockerrun
 
 # Usage
 
-To know the API calls, consult the swagger
+
+For API calls, see the swagger.
