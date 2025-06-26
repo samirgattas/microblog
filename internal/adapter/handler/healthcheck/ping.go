@@ -1,16 +1,16 @@
 package healthcheck
 
 import (
-	"microblog/internal/core/port/handler/healthcheck"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samirgattas/microblog/internal/core/port/handler"
 )
 
 type healthCheckHandler struct {
 }
 
-func NewHealthCheckHandler() healthcheck.HealthCheckHandler {
+func NewHealthCheckHandler() handler.HealthCheckHandler {
 	return &healthCheckHandler{}
 }
 
