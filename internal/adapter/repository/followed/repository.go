@@ -97,25 +97,25 @@ func (r *followedRepository) Update(ctx context.Context, followed *domain.Follow
 func (r *followedRepository) SearchByUserIDAndFollowedUserID(ctx context.Context, followerUserID *int64, followedUserID *int64) ([]domain.Followed, error) {
 	searchQuery := `SELECT id, user_id, followed_user_id, enabled, created_at, updated_at FROM Followed`
 
-	var args []any
+	var args []interface{}
 	if followerUserID != nil || followedUserID != nil {
-		searchQuery = ` WHERE `
+		searchQuery += ` WHERE `
 		if followerUserID != nil {
 			searchQuery += `user_id = ?`
-			args = append(args, followerUserID)
+			args = append(args, *followerUserID)
 		}
 		if followerUserID != nil && followedUserID != nil {
 			searchQuery += ` AND `
 		}
 		if followedUserID != nil {
 			searchQuery += `followed_user_id = ?`
-			args = append(args, followedUserID)
+			args = append(args, *followedUserID)
 		}
 
 	}
 
 	followedArray := []domain.Followed{}
-	rows, err := r.followedDB.QueryContext(ctx, searchQuery, args)
+	rows, err := r.followedDB.QueryContext(ctx, searchQuery, args...)
 	if err != nil {
 		return []domain.Followed{}, err
 	}
