@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -41,7 +42,7 @@ func main() {
 	Routes(router, h)
 
 	// Run server
-	if err := router.Run(c.Domain + ":8080"); err != nil {
+	if err := router.Run(fmt.Sprintf("%s:%d", c.Server.Domain, c.Server.Port)); err != nil {
 		os.Exit(1)
 	}
 }
