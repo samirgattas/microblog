@@ -1,14 +1,21 @@
 package config
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
-var c *Config
-
 type Config struct {
+	Server Server   `yaml:"server"`
 	MySQL  Database `yaml:"mysql"`
-	Domain string   `yaml:"domain"`
+}
+
+type Server struct {
+	Domain string `yaml:"domain"`
+	Port   int64  `yaml:"port"`
 }
 
 type Database struct {
@@ -19,20 +26,28 @@ type Database struct {
 }
 
 func (c *Config) NewConfig() *Config {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Error getting current working directory: %v", err)
+	}
+
+	data, err := ioutil.ReadFile(pwd + "/../config/env_local.yaml")
+	if err != nil {
+		log.Fatalf("Cannot read config file")
+	}
+
+	var cfg *Config
+	err = yaml.Unmarshal(data, &cfg)
+	if err != nil {
+		log.Fatalf("Cannot unmarshal config")
+	}
+
 	domain := "localhost"
 	if isDockerEnv() {
 		domain = ""
 	}
-	c = &Config{
-		Domain: domain,
-		MySQL: Database{
-			Port:     3307,
-			Domain:   "127.0.0.1",
-			User:     "root",
-			Password: "root",
-		},
-	}
-	return c
+	cfg.Server.Domain = domain
+	return cfg
 }
 
 func isDockerEnv() bool {
