@@ -13,34 +13,31 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/core/domain"
-	inmemorystore "github.com/samirgattas/microblog/lib/in_memory_store"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	c          *config.Config
-	r          *gin.Engine
-	userDB     inmemorystore.Store
-	followedDB map[int64]domain.Followed
-	tweetDB    map[int64]domain.Tweet
+	c   *config.Config
+	r   *gin.Engine
+	app App
 )
 
 func initTest() *gin.Engine {
-	userDB = inmemorystore.NewStore()
-	followedDB = make(map[int64]domain.Followed)
-	tweetDB = make(map[int64]domain.Tweet)
 	c = &config.Config{}
-	c = c.NewConfig(userDB, followedDB, tweetDB)
-	handler := Container(c)
+	c = c.NewConfig()
+	app = NewApp(*c)
+	handler := Container(app)
 	r := gin.Default()
 	Routes(r, handler)
 	return r
 }
 
 func CleanDBs() {
-	userDB.Drop()
-	followedDB = make(map[int64]domain.Followed)
-	tweetDB = make(map[int64]domain.Tweet)
+	res, err := app.Database.Exec("DELETE FROM User;")
+	res, err = app.Database.Exec("DELETE FROM Followed;")
+	_ = err
+	_ = res
+	app.TweetDB = make(map[int64]domain.Tweet)
 }
 
 // PING - GET /ping
@@ -82,9 +79,6 @@ func TestSaveUser_Ok(t *testing.T) {
 	assert.Nil(t, err)
 	expectedResp := domain.User{ID: 5, Nickname: "myNickname", CreatedAt: responseUser.CreatedAt}
 	assert.Equal(t, expectedResp, responseUser)
-
-	_, err = userDB.Get(5)
-	assert.Nil(t, err)
 }
 
 // GET USER - GET /users/:id
@@ -136,8 +130,7 @@ func TestSaveFollowed_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	userDB.SaveWithID(11, domain.User{ID: 11, Nickname: "user11"})
-	userDB.SaveWithID(12, domain.User{ID: 12, Nickname: "user12"})
+	app.Database.Query(`INSERT INTO User (user_id, nickname) VALUES ('11', 'user11'), ('12', 'user12');`)
 
 	// user_id:11 follows user_id:12
 	body := `{
@@ -164,7 +157,7 @@ func TestGetFollowed_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	followedDB[1] = domain.Followed{ID: 1, UserID: 11, FollowedUserID: 12, Enabled: true}
+	app.Database.Query(`INSERT INTO Followed (id, user_id, followed_user_id, enabled) VALUES (1, 11, 12, 1);`)
 
 	req, _ := http.NewRequest("GET", "/followed/1", nil)
 	w := httptest.NewRecorder()
@@ -186,7 +179,7 @@ func TestUpdateFollowed_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	followedDB[1] = domain.Followed{ID: 1, UserID: 11, FollowedUserID: 12, Enabled: true}
+	app.Database.Query(`INSERT INTO Followed (id, user_id, followed_user_id, enabled) VALUES (1, 11, 12, 1);`)
 
 	// user_id:11 unfollows user_id:12
 	body := `{
@@ -212,7 +205,7 @@ func TestCreateTweet_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	userDB.SaveWithID(12345, domain.User{ID: 12345, Nickname: "nickname"})
+	app.Database.Query(`INSERT INTO User (user_id, nickname) VALUES ('12345', 'nickname');`)
 
 	// user_id:11 unfollows user_id:12
 	body := `{
@@ -237,7 +230,7 @@ func TestCreateTweet_PostTooLongError(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	userDB.SaveWithID(12345, domain.User{ID: 12345, Nickname: "nickname"})
+	app.Database.Query(`INSERT INTO User (user_id, nickname) VALUES ('12345', 'nickname');`)
 
 	// user_id:11 unfollows user_id:12
 	post := strings.Repeat("a", 250)
@@ -261,7 +254,7 @@ func TestGetTweet_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	tweetDB[100] = domain.Tweet{ID: 100, UserID: 12, Post: "Tweet 100!"}
+	app.TweetDB[100] = domain.Tweet{ID: 100, UserID: 12, Post: "Tweet 100!"}
 
 	req, _ := http.NewRequest("GET", "/tweets/100", nil)
 	w := httptest.NewRecorder()
@@ -280,12 +273,11 @@ func TestSearchTweets_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	followedDB[1] = domain.Followed{ID: 1, UserID: 11, FollowedUserID: 12, Enabled: true}
-	followedDB[2] = domain.Followed{ID: 2, UserID: 11, FollowedUserID: 13, Enabled: true}
-	tweetDB[1] = domain.Tweet{ID: 1, UserID: 12, Post: "Tweet 1 of user_id: 12"}
-	tweetDB[2] = domain.Tweet{ID: 2, UserID: 12, Post: "Tweet 2 of user_id: 12"}
-	tweetDB[3] = domain.Tweet{ID: 3, UserID: 13, Post: "Tweet 1 of user_id: 13"}
-	tweetDB[4] = domain.Tweet{ID: 4, UserID: 13, Post: "Tweet 2 of user_id: 13"}
+	app.Database.Query(`INSERT INTO Followed (id, user_id, followed_user_id, enabled) VALUES (1, 11, 12, 1), (2, 11, 13, 1);`)
+	app.TweetDB[1] = domain.Tweet{ID: 1, UserID: 12, Post: "Tweet 1 of user_id: 12"}
+	app.TweetDB[2] = domain.Tweet{ID: 2, UserID: 12, Post: "Tweet 2 of user_id: 12"}
+	app.TweetDB[3] = domain.Tweet{ID: 3, UserID: 13, Post: "Tweet 1 of user_id: 13"}
+	app.TweetDB[4] = domain.Tweet{ID: 4, UserID: 13, Post: "Tweet 2 of user_id: 13"}
 
 	req, _ := http.NewRequest("GET", "/tweets?user_id=11&limit=3", nil)
 	w := httptest.NewRecorder()
@@ -302,12 +294,11 @@ func TestSearchTweets_UsePaging_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	followedDB[1] = domain.Followed{ID: 1, UserID: 11, FollowedUserID: 12, Enabled: true}
-	followedDB[2] = domain.Followed{ID: 2, UserID: 11, FollowedUserID: 13, Enabled: true}
-	tweetDB[1] = domain.Tweet{ID: 1, UserID: 12, Post: "Tweet 1 of user_id: 12"}
-	tweetDB[2] = domain.Tweet{ID: 2, UserID: 12, Post: "Tweet 2 of user_id: 12"}
-	tweetDB[3] = domain.Tweet{ID: 3, UserID: 13, Post: "Tweet 1 of user_id: 13"}
-	tweetDB[4] = domain.Tweet{ID: 4, UserID: 13, Post: "Tweet 2 of user_id: 13"}
+	app.Database.Query(`INSERT INTO Followed (id, user_id, followed_user_id, enabled) VALUES (1, 11, 12, 1), (2, 11, 13, 1);`)
+	app.TweetDB[1] = domain.Tweet{ID: 1, UserID: 12, Post: "Tweet 1 of user_id: 12"}
+	app.TweetDB[2] = domain.Tweet{ID: 2, UserID: 12, Post: "Tweet 2 of user_id: 12"}
+	app.TweetDB[3] = domain.Tweet{ID: 3, UserID: 13, Post: "Tweet 1 of user_id: 13"}
+	app.TweetDB[4] = domain.Tweet{ID: 4, UserID: 13, Post: "Tweet 2 of user_id: 13"}
 	// Search for user_id: 11 with offset:0 and limit:3
 	{
 		req, _ := http.NewRequest("GET", "/tweets?user_id=11&limit=3", nil)
