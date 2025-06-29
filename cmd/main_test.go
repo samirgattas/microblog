@@ -23,8 +23,7 @@ var (
 )
 
 func initTest() *gin.Engine {
-	c = &config.Config{}
-	c = c.NewConfig()
+	c := c.NewConfig()
 	app = NewApp(*c)
 	handler := Container(app)
 	r := gin.Default()
@@ -33,10 +32,8 @@ func initTest() *gin.Engine {
 }
 
 func CleanDBs() {
-	res, err := app.Database.Exec("DELETE FROM User;")
-	res, err = app.Database.Exec("DELETE FROM Followed;")
-	_ = err
-	_ = res
+	_, _ = app.Database.Exec("DELETE FROM User;")
+	_, _ = app.Database.Exec("DELETE FROM Followed;")
 	app.TweetDB = make(map[int64]domain.Tweet)
 }
 
