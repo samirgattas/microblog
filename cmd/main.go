@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +20,7 @@ import (
 	followedservice "github.com/samirgattas/microblog/internal/core/service/followed"
 	tweetservice "github.com/samirgattas/microblog/internal/core/service/tweet"
 	userservice "github.com/samirgattas/microblog/internal/core/service/user"
-	inmemorystore "github.com/samirgattas/microblog/lib/in_memory_store"
+	"github.com/samirgattas/microblog/lib/database"
 )
 
 type Handler struct {
@@ -29,12 +31,10 @@ type Handler struct {
 }
 
 func main() {
-	userDB := inmemorystore.NewStore()
-	followedDB := make(map[int64]domain.Followed)
-	tweetDB := make(map[int64]domain.Tweet)
 	c := &config.Config{}
-	c = c.NewConfig(userDB, followedDB, tweetDB)
-	h := Container(c)
+	c = c.NewConfig()
+	app := NewApp(*c)
+	h := Container(app)
 
 	router := gin.Default()
 
@@ -69,23 +69,23 @@ func Routes(router *gin.Engine, h Handler) {
 	router.GET("/tweets", h.tweetHandler.SearchTweets)
 }
 
-func Container(c *config.Config) Handler {
+func Container(app App) Handler {
 	// Create User repository
-	userRepository := user.NewUserRepository(c.UserDB)
+	userRepository := user.NewUserRepository(app.Database)
 	// Create User service
 	userService := userservice.NewUserService(userRepository)
 	// Create User handler
 	userHandler := userhandler.NewUserHandler(userService)
 
 	// Create Followed repository
-	followedRepository := followed.NewFollowedRepository(c.FollowedDB)
+	followedRepository := followed.NewFollowedRepository(app.Database)
 	// Create Followed service
 	followedService := followedservice.NewFollowedService(followedRepository, userRepository)
 	// Create Followed handler
 	followedHandler := followedhandler.NewFollowedHandler(followedService)
 
 	// Create Tweet repository
-	tweetRepository := tweet.NewTweetRepository(c.TweetDB)
+	tweetRepository := tweet.NewTweetRepository(app.TweetDB)
 	// Create Tweet service
 	tweetService := tweetservice.NewTweetService(tweetRepository, userRepository, followedRepository)
 	// Create Tweet handler
@@ -102,4 +102,24 @@ func Container(c *config.Config) Handler {
 	}
 
 	return handler
+}
+
+type App struct {
+	Database *sql.DB
+	TweetDB  map[int64]domain.Tweet
+}
+
+func NewApp(c config.Config) App {
+	// Init MySQL
+	db, err := database.NewMySQL(c.MySQL.User, c.MySQL.Password, c.MySQL.Domain, c.MySQL.Port)
+	if err != nil {
+		log.Fatalf("error init mysql")
+	}
+
+	tweetDB := map[int64]domain.Tweet{}
+
+	return App{
+		Database: db,
+		TweetDB:  tweetDB,
+	}
 }
