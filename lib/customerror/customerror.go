@@ -32,10 +32,23 @@ func NewBadRequestError(msg string) error {
 	}
 }
 
+func NewInternalServerError(msg string) error {
+	return InternalServerError{
+		CustomError{
+			Message:    msg,
+			StatusCode: http.StatusBadRequest,
+		},
+	}
+}
+
 type NotFoundError struct {
 	CustomError
 }
 
 type BadRequestError struct {
+	CustomError
+}
+
+type InternalServerError struct {
 	CustomError
 }

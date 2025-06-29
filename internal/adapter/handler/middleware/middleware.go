@@ -36,6 +36,12 @@ func ErrorHandler() gin.HandlerFunc {
 					"status":  errHand.StatusCode,
 				}
 				statusCode = errHand.StatusCode
+			case customerror.InternalServerError:
+				msg = gin.H{
+					"message": errHand.Error(),
+					"status":  errHand.StatusCode,
+				}
+				statusCode = errHand.StatusCode
 			}
 			// Step5: Respond with a generic error message
 			c.JSON(statusCode, msg)
