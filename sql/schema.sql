@@ -16,7 +16,7 @@ CREATE TABLE Followed (
   followed_user_id INT NOT NULL,
   enabled TINYINT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  update_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE INDEX `user_id_followed_user_id_unique_idx` (user_id, followed_user_id)
 );
