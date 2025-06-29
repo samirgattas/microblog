@@ -116,7 +116,7 @@ func NewApp(c config.Config) App {
 		log.Fatalf("error init mysql")
 	}
 
-	tweetDB := map[int64]domain.Tweet{}
+	tweetDB := make(map[int64]domain.Tweet)
 
 	return App{
 		Database: db,
