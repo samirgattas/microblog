@@ -1,0 +1,7 @@
+server:
+  port: 8080
+mysql:
+  port: 3307
+  domain: 127.0.01
+  user: root
+  password: root
