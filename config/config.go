@@ -1,33 +1,53 @@
 package config
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
 
-	"github.com/samirgattas/microblog/internal/core/domain"
-	inmemorystore "github.com/samirgattas/microblog/lib/in_memory_store"
+	"gopkg.in/yaml.v3"
 )
 
-var c *Config
-
 type Config struct {
-	UserDB     inmemorystore.Store
-	FollowedDB map[int64]domain.Followed
-	TweetDB    map[int64]domain.Tweet
-	Domain     string
+	Server Server   `yaml:"server"`
+	MySQL  Database `yaml:"mysql"`
 }
 
-func (c *Config) NewConfig(userDB inmemorystore.Store, followedDB map[int64]domain.Followed, tweetDB map[int64]domain.Tweet) *Config {
+type Server struct {
+	Domain string `yaml:"domain"`
+	Port   int64  `yaml:"port"`
+}
+
+type Database struct {
+	Domain   string `yaml:"domain"`
+	Port     int64  `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+}
+
+func (c *Config) NewConfig() *Config {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Error getting current working directory: %v", err)
+	}
+
+	data, err := ioutil.ReadFile(pwd + "/../config/env_local.yaml")
+	if err != nil {
+		log.Fatalf("Cannot read config file")
+	}
+
+	var cfg *Config
+	err = yaml.Unmarshal(data, &cfg)
+	if err != nil {
+		log.Fatalf("Cannot unmarshal config")
+	}
+
 	domain := "localhost"
 	if isDockerEnv() {
 		domain = ""
 	}
-	c = &Config{
-		UserDB:     userDB,
-		FollowedDB: followedDB,
-		TweetDB:    tweetDB,
-		Domain:     domain,
-	}
-	return c
+	cfg.Server.Domain = domain
+	return cfg
 }
 
 func isDockerEnv() bool {
