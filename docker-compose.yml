@@ -14,4 +14,8 @@ services:
     # Copy sql file that create tables
     volumes:
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/init.sql
-
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    restart: always
