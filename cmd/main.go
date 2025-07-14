@@ -22,6 +22,8 @@ import (
 	tweetservice "github.com/samirgattas/microblog/internal/core/service/tweet"
 	userservice "github.com/samirgattas/microblog/internal/core/service/user"
 	"github.com/samirgattas/microblog/lib/database"
+	"github.com/samirgattas/microblog/lib/mongodb"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
@@ -86,7 +88,7 @@ func Container(app App) Handler {
 	followedHandler := followedhandler.NewFollowedHandler(followedService)
 
 	// Create Tweet repository
-	tweetRepository := tweet.NewTweetRepository(app.TweetDB)
+	tweetRepository := tweet.NewTweetRepository(app.Mongodb)
 	// Create Tweet service
 	tweetService := tweetservice.NewTweetService(tweetRepository, userRepository, followedRepository)
 	// Create Tweet handler
