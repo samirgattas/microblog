@@ -107,10 +107,14 @@ func Container(app App) Handler {
 
 type App struct {
 	Database *sql.DB
+	Mongodb  *mongo.Database
 	TweetDB  map[int64]domain.Tweet
 }
 
 func NewApp(c config.Config) App {
+	// Init MongoDB
+	mongodb := mongodb.NewMongoDB("localhost", 27017)
+
 	// Init MySQL
 	db, err := database.NewMySQL(c.MySQL.User, c.MySQL.Password, c.MySQL.Domain, c.MySQL.Port)
 	if err != nil {
@@ -121,6 +125,7 @@ func NewApp(c config.Config) App {
 
 	return App{
 		Database: db,
+		Mongodb:  mongodb,
 		TweetDB:  tweetDB,
 	}
 }
