@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,6 +15,8 @@ import (
 	"github.com/samirgattas/microblog/config"
 	"github.com/samirgattas/microblog/internal/core/domain"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -34,6 +37,7 @@ func initTest() *gin.Engine {
 func CleanDBs() {
 	_, _ = app.Database.Exec("DELETE FROM User;")
 	_, _ = app.Database.Exec("DELETE FROM Followed;")
+	app.Mongodb.Collection("Tweet").DeleteMany(context.TODO(), bson.D{{}})
 	app.TweetDB = make(map[int64]domain.Tweet)
 }
 
@@ -41,6 +45,7 @@ func CleanDBs() {
 
 func TestPing_Ok(t *testing.T) {
 	r := initTest()
+	defer CleanDBs()
 
 	req, _ := http.NewRequest("GET", "/ping", nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -251,9 +256,14 @@ func TestGetTweet_Ok(t *testing.T) {
 	r := initTest()
 	defer CleanDBs()
 
-	app.TweetDB[100] = domain.Tweet{ID: 100, UserID: 12, Post: "Tweet 100!"}
+	tweet := domain.Tweet{ID: "100", UserID: 12, Post: "Tweet 100!"}
+	res, err := app.Mongodb.Collection("Tweet").InsertOne(context.Background(), tweet)
+	assert.Nil(t, err)
+	insertedID, ok := res.InsertedID.(primitive.ObjectID)
+	assert.False(t, ok)
+	tweetID := insertedID.Hex()
 
-	req, _ := http.NewRequest("GET", "/tweets/100", nil)
+	req, _ := http.NewRequest("GET", fmt.Sprintf("/tweets/%s", tweetID), nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
@@ -271,10 +281,10 @@ func TestSearchTweets_Ok(t *testing.T) {
 	defer CleanDBs()
 
 	app.Database.Query(`INSERT INTO Followed (id, user_id, followed_user_id, enabled) VALUES (1, 11, 12, 1), (2, 11, 13, 1);`)
-	app.TweetDB[1] = domain.Tweet{ID: 1, UserID: 12, Post: "Tweet 1 of user_id: 12"}
-	app.TweetDB[2] = domain.Tweet{ID: 2, UserID: 12, Post: "Tweet 2 of user_id: 12"}
-	app.TweetDB[3] = domain.Tweet{ID: 3, UserID: 13, Post: "Tweet 1 of user_id: 13"}
-	app.TweetDB[4] = domain.Tweet{ID: 4, UserID: 13, Post: "Tweet 2 of user_id: 13"}
+	app.TweetDB[1] = domain.Tweet{ID: "1", UserID: 12, Post: "Tweet 1 of user_id: 12"}
+	app.TweetDB[2] = domain.Tweet{ID: "2", UserID: 12, Post: "Tweet 2 of user_id: 12"}
+	app.TweetDB[3] = domain.Tweet{ID: "3", UserID: 13, Post: "Tweet 1 of user_id: 13"}
+	app.TweetDB[4] = domain.Tweet{ID: "4", UserID: 13, Post: "Tweet 2 of user_id: 13"}
 
 	req, _ := http.NewRequest("GET", "/tweets?user_id=11&limit=3", nil)
 	w := httptest.NewRecorder()
@@ -292,10 +302,10 @@ func TestSearchTweets_UsePaging_Ok(t *testing.T) {
 	defer CleanDBs()
 
 	app.Database.Query(`INSERT INTO Followed (id, user_id, followed_user_id, enabled) VALUES (1, 11, 12, 1), (2, 11, 13, 1);`)
-	app.TweetDB[1] = domain.Tweet{ID: 1, UserID: 12, Post: "Tweet 1 of user_id: 12"}
-	app.TweetDB[2] = domain.Tweet{ID: 2, UserID: 12, Post: "Tweet 2 of user_id: 12"}
-	app.TweetDB[3] = domain.Tweet{ID: 3, UserID: 13, Post: "Tweet 1 of user_id: 13"}
-	app.TweetDB[4] = domain.Tweet{ID: 4, UserID: 13, Post: "Tweet 2 of user_id: 13"}
+	app.TweetDB[1] = domain.Tweet{ID: "1", UserID: 12, Post: "Tweet 1 of user_id: 12"}
+	app.TweetDB[2] = domain.Tweet{ID: "2", UserID: 12, Post: "Tweet 2 of user_id: 12"}
+	app.TweetDB[3] = domain.Tweet{ID: "3", UserID: 13, Post: "Tweet 1 of user_id: 13"}
+	app.TweetDB[4] = domain.Tweet{ID: "4", UserID: 13, Post: "Tweet 2 of user_id: 13"}
 	// Search for user_id: 11 with offset:0 and limit:3
 	{
 		req, _ := http.NewRequest("GET", "/tweets?user_id=11&limit=3", nil)
