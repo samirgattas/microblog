@@ -1,24 +1,25 @@
 package tweet
 
 import (
-	"cmp"
 	"context"
-	"log/slog"
-	"slices"
 	"time"
 
 	"github.com/samirgattas/microblog/internal/core/domain"
 	"github.com/samirgattas/microblog/internal/core/port/repository"
 	"github.com/samirgattas/microblog/lib/customerror"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var tweetID = int64(0) // This is the entity id
 
 type tweetRepository struct {
-	tweetDB map[int64]domain.Tweet
+	tweetDB *mongo.Database
 }
 
-func NewTweetRepository(tweetDB map[int64]domain.Tweet) repository.TweetRepository {
+func NewTweetRepository(tweetDB *mongo.Database) repository.TweetRepository {
 	return &tweetRepository{
 		tweetDB: tweetDB,
 	}
@@ -26,50 +27,64 @@ func NewTweetRepository(tweetDB map[int64]domain.Tweet) repository.TweetReposito
 
 func (r *tweetRepository) Save(ctx context.Context, tweet *domain.Tweet) error {
 	now := time.Now()
-	tweetID++
-	tweet.ID = tweetID
 	tweet.CreatedAt = &now
-	r.tweetDB[tweetID] = *tweet
+	res, err := r.tweetDB.Collection("Tweet").InsertOne(ctx, tweet)
+	if err != nil {
+		return err
+	}
+
+	insertedID, ok := res.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return customerror.NewInternalServerError("no inserted")
+	}
+	tweet.ID = insertedID.Hex()
 	return nil
 }
 
 func (r *tweetRepository) Get(ctx context.Context, tweetID int64) (*domain.Tweet, error) {
-	tweet, ok := r.tweetDB[tweetID]
-	if !ok {
-		slog.ErrorContext(ctx, "tweet not found", slog.Any("tweet_id", tweetID))
-		return &domain.Tweet{}, customerror.NewNotFoundError("tweet")
+	tweet := domain.Tweet{}
+
+	// Filter by id
+	filter := bson.D{{"_id", tweetID}}
+	res := r.tweetDB.Collection("Tweet").FindOne(ctx, filter)
+
+	if err := res.Decode(tweet); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return &domain.Tweet{}, customerror.NewNotFoundError("followed")
+		}
+		return &domain.Tweet{}, err
 	}
+
 	return &tweet, nil
 }
 
+// TODO: implement pagination
 func (r *tweetRepository) Search(ctx context.Context, params domain.TweetSearchParams) (domain.TweetsSearchResult, error) {
+	// Sort by created_at field. 1 -> ASC / -1 -> DESC
+	options := options.Find().SetSort(bson.D{{"created_at", -1}})
+	options.Limit = &params.Limit
+	options.SetSkip(params.Offset)
+	// Filter
+	filter := bson.D{{"user_id", bson.D{{"$in", params.UserIDs}}}}
+	cursor, err := r.tweetDB.Collection("Tweet").Find(ctx, filter, options)
+	if err != nil {
+		return domain.TweetsSearchResult{}, err
+	}
+
 	tweets := []domain.Tweet{}
-	for _, tweet := range r.tweetDB {
-		if !slices.Contains(params.UserIDs, tweet.UserID) {
-			continue
-		}
-		tweets = append(tweets, tweet)
+	if err = cursor.All(ctx, &tweets); err != nil {
+		panic(err)
 	}
 
 	paging := domain.Paging{
-		Total:  int64(len(tweets)),
+		Total:  10,
 		Limit:  params.Limit,
 		Offset: params.Offset,
 	}
-	slices.SortFunc(tweets, sortByDescID)
 
-	bottom := paging.Offset
-	top := paging.Offset + paging.Limit
-	if top > int64(len(tweets)) {
-		top = int64(len(tweets))
-	}
 	result := domain.TweetsSearchResult{
-		Results: tweets[bottom:top],
+		Results: tweets,
 		Paging:  paging,
 	}
 	return result, nil
-}
-
-func sortByDescID(t1, t2 domain.Tweet) int {
-	return cmp.Compare(t2.ID, t1.ID)
 }
